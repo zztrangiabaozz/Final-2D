@@ -8,24 +8,84 @@ public class Player : MonoBehaviour
     [SerializeField] private GameController _gameController;
     // Add member variables to store references to this GameObject's 
     //      Rigidbody, Animator, and SpriteRenderer.
+    private Rigidbody2D _rb2D;
+    private Animator _animator;
+    private SpriteRenderer _renderer;
     [SerializeField] private float _speed;
     [SerializeField] private float _jump;
 
     private bool _facingLeft;
     private bool _isGrounded;
 
+    private void Start()
+    {
+        _rb2D = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _renderer = GetComponent<SpriteRenderer>();
+    }
+
     // ------------------------------------------------------------------------
     // Add a built-in UNITY METHOD that runs EVERY FRAME.
         // Detect input to move player left/right, jump, and kick
         // Change character facing with SpriteRenderer.flipX value
-        // Set animation parameters 
+        // Set animation parameters
+    private void Update()
+    {
+        Debug.Log("Player script is running");
+        float horizontal = Input.GetAxisRaw("Horizontal");
+
+        _rb2D.linearVelocity = new Vector2(horizontal * _speed, _rb2D.linearVelocity.y);
+
+
+        if (horizontal < 0)
+        {
+            _facingLeft = true;
+        }
+        else if (horizontal > 0)
+        {
+            _facingLeft = false;
+        }
+
+
+        _renderer.flipX = _facingLeft;
+
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) && _isGrounded)
+        {
+            _rb2D.linearVelocity = new Vector2(_rb2D.linearVelocity.x, _jump);
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("X KEY PRESSED!");
+            Kick();
+        }
+
+
+        _animator.SetFloat("Speed", Mathf.Abs(horizontal));
+        _animator.SetBool("Grounded", _isGrounded);
+    }
 
     // ------------------------------------------------------------------------
     private void Kick()
     {
+        Debug.Log("KICK METHOD STARTED!");
         // Set animation parameter.
-
+        _animator.SetTrigger("Kick");
         // Either activate left or right kick based on character facing
+        if (_facingLeft)
+        {
+            Debug.Log("Kicking LEFT!");
+            _kickLeft.SetActive(true);
+            _kickRight.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("Kicking RIGHT!");
+            _kickLeft.SetActive(false);
+            _kickRight.SetActive(true);
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -33,4 +93,19 @@ public class Player : MonoBehaviour
     // Use this to avoid allowing the Player to double jump- they should
     //      collide with an object with the Ground tag before being able to
     //      jump again.
+    private void OnCollisionStay2D(Collision2D collision)
+    {   
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            _isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            _isGrounded = false;
+        }
+    }
 }

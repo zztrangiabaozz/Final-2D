@@ -3,22 +3,41 @@ using UnityEngine;
 public class KickAttack : MonoBehaviour
 {
     [SerializeField] public float _lifetime = 0.1f;
-    [SerializeField] private Vector3 _kickAmount = Vector3.up;
-
+    [SerializeField] private Vector3 _kickAmount = new Vector3(8f, 3f, 0f);
     // Add a member variable to represent the timer.
+    private float _timer;
 
     // ------------------------------------------------------------------------
     private void OnEnable()
     {
         // Setup timer
+        _timer = _lifetime;
     }
 
     // ------------------------------------------------------------------------
     // Use a built-in Unity method that runs every frame...
     // Disable this GameObject when time runs out
+    private void Update()
+    {
+        _timer -= Time.deltaTime;
+
+        if (_timer<= 0)
+        {
+            gameObject.SetActive(false);
+        }
+    }
 
     // ------------------------------------------------------------------------
     // Use a built-in Unity collision detection method...
     // Check if the colliding object has a Kickable component-
     //      if so, Kick it!
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Kickable kickable = collision.GetComponent<Kickable>();
+
+        if (kickable != null)
+        {
+            kickable.Kick(_kickAmount);
+        }
+    }
 }

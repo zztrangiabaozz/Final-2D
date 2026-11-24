@@ -1,12 +1,19 @@
 using UnityEngine;
 
 // Add an enum to represent an item's rarity.
+public enum ItemRarity
+{
+    Common,
+    Uncommon,
+    Rare
+}
 
 public class Kickable : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D _rigidbody;
     [SerializeField] private GameObject _explosionVfxPrefab;
     // Add a member variable to represent this item's rarity.
+    [SerializeField] private ItemRarity _rarity;
 
     private bool _wasKicked;
     private GameController _gameController;
@@ -22,16 +29,23 @@ public class Kickable : MonoBehaviour
     public void Kick(Vector3 force)
     {
         // Set the 'was kicked' flag.
+        _wasKicked = true;
 
         // Add the input force to the rigidbody to make the item fly.
+        _rigidbody.AddForce(force, ForceMode2D.Impulse);
 
         // Let the GameController know this object was kicked.
+
     }
 
     // ------------------------------------------------------------------------
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // If this object was kicked, explode.
+        if (_wasKicked)
+        {
+            Explode();
+        }
     }
 
     // ------------------------------------------------------------------------
@@ -40,5 +54,8 @@ public class Kickable : MonoBehaviour
         // Create the explosion VFX.
 
         // Destroy this item.
+        Instantiate(_explosionVfxPrefab, transform.position, Quaternion.identity);
+
+        Destroy(gameObject);
     }
 }
