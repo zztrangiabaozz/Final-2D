@@ -32,7 +32,7 @@ public class Kickable : MonoBehaviour
         _wasKicked = true;
 
         // Add the input force to the rigidbody to make the item fly.
-        _rigidbody.AddForce(force, ForceMode2D.Impulse);
+        _rigidbody.AddForce(new Vector2(force.x, force.y), ForceMode2D.Impulse);
 
         // Let the GameController know this object was kicked.
 

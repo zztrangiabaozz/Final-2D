@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
         // Set animation parameters
     private void Update()
     {
-        Debug.Log("Player script is running");
+        Debug.Log("UPDATE IS RUNNING!");
         float horizontal = Input.GetAxisRaw("Horizontal");
 
         _rb2D.linearVelocity = new Vector2(horizontal * _speed, _rb2D.linearVelocity.y);
@@ -46,22 +46,19 @@ public class Player : MonoBehaviour
             _facingLeft = false;
         }
 
-
         _renderer.flipX = _facingLeft;
 
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) && _isGrounded)
-        {
+        if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) && _isGrounded)
+        {    
             _rb2D.linearVelocity = new Vector2(_rb2D.linearVelocity.x, _jump);
         }
 
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
         {
-            Debug.Log("X KEY PRESSED!");
+            Debug.Log("KICK METHOD START");
             Kick();
         }
-
 
         _animator.SetFloat("Speed", Mathf.Abs(horizontal));
         _animator.SetBool("Grounded", _isGrounded);
@@ -70,22 +67,24 @@ public class Player : MonoBehaviour
     // ------------------------------------------------------------------------
     private void Kick()
     {
-        Debug.Log("KICK METHOD STARTED!");
         // Set animation parameter.
         _animator.SetTrigger("Kick");
-        // Either activate left or right kick based on character facing
-        if (_facingLeft)
+        Debug.Log("KICK METHOD STARTED!");
+
+        if (_kickLeft == null || _kickRight == null)
         {
-            Debug.Log("Kicking LEFT!");
-            _kickLeft.SetActive(true);
-            _kickRight.SetActive(false);
+            Debug.LogError("KICK REFERENCES ARE MISSING!");
+            return;
         }
-        else
-        {
-            Debug.Log("Kicking RIGHT!");
-            _kickLeft.SetActive(false);
-            _kickRight.SetActive(true);
-        }
+
+        GameObject hitbox = _facingLeft ? _kickLeft : _kickRight;
+
+        _kickLeft.SetActive(false);
+        _kickRight.SetActive(false);
+
+        Debug.Log("ACTIVATING HITBOX: " + hitbox.name);
+
+        hitbox.SetActive(true);
     }
 
     // ------------------------------------------------------------------------
