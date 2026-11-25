@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
     // Add a member variable that's a LIST (or ARRAY) of all of the objects
     //      that the player is required to kick.
     // This variable should be editable from the inspector.
+    [SerializeField] private List<GameObject> _requiredItems;
 
     private int _commonPoints;
     private int _uncommonPoints;
@@ -25,6 +26,7 @@ public class GameController : MonoBehaviour
         SetGameEnabled(false);
 
         // Tell the HUD what the required items are.
+        _hud.SetRequiredItems(_requiredItems);
     }
 
     // ------------------------------------------------------------------------
@@ -73,9 +75,11 @@ public class GameController : MonoBehaviour
     {
         SetGameEnabled(false);
 
-        // Calculate the player's total points.
+    // Calculate the player's total points.
+        int totalPoints = _commonPoints + _uncommonPoints + _rarePoints;
 
-        // Tell the GameOverUI.
+    // Tell the GameOverUI.
+        _gameOverUI.Activate(_commonPoints, _uncommonPoints, _rarePoints, totalPoints);
     }
 
     // ------------------------------------------------------------------------
@@ -89,7 +93,7 @@ public class GameController : MonoBehaviour
     // ------------------------------------------------------------------------
     // You will need to ADD PARAMETERS to this method to represent the GameObject
     //  kicked and the rarity of that object.
-    public void Kicked()
+    public void Kicked(GameObject item, ItemRarity rarity)
     {
         // Use a switch statement.
         // Based on the rarity of the object kicked, change the number of points
@@ -97,6 +101,21 @@ public class GameController : MonoBehaviour
         
 
         // Tell the HUD what item was kicked, and how many points we now have.
-        
+        switch (rarity)
+        {
+            case ItemRarity.Common:
+                _commonPoints += 1;
+                break;
+            case ItemRarity.Uncommon:
+                _uncommonPoints += 2;
+                break;
+            case ItemRarity.Rare:
+                _rarePoints += 3;
+                break;
+        }
+
+    // Tell the HUD what item was kicked, and how many points we now have.
+        _hud.KickedItem(item);                          // CHECK name
+        _hud.UpdatePointsText(_commonPoints, _uncommonPoints, _rarePoints);
     }
 }

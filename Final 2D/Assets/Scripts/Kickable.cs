@@ -28,14 +28,12 @@ public class Kickable : MonoBehaviour
     // ------------------------------------------------------------------------
     public void Kick(Vector3 force)
     {
-        // Set the 'was kicked' flag.
+        // Ignore repeat kicks so an item can't be checked off twice.
+        if (_wasKicked) return;
+
         _wasKicked = true;
 
-        // Add the input force to the rigidbody to make the item fly.
         _rigidbody.AddForce(new Vector2(force.x, force.y), ForceMode2D.Impulse);
-
-        // Let the GameController know this object was kicked.
-
     }
 
     // ------------------------------------------------------------------------
@@ -54,8 +52,10 @@ public class Kickable : MonoBehaviour
         // Create the explosion VFX.
 
         // Destroy this item.
-        Instantiate(_explosionVfxPrefab, transform.position, Quaternion.identity);
-
+        if (_explosionVfxPrefab != null)
+        {
+            Instantiate(_explosionVfxPrefab, transform.position, Quaternion.identity);
+        }
         Destroy(gameObject);
     }
 }

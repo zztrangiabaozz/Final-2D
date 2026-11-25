@@ -36,8 +36,6 @@ public class KickAttack : MonoBehaviour
     //      if so, Kick it!
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("KICK HITBOX TOUCHED: " + collision.name);
-
         Kickable kickable = collision.GetComponent<Kickable>();
 
         if (kickable == null)
@@ -47,12 +45,7 @@ public class KickAttack : MonoBehaviour
 
         if (kickable != null)
         {
-            Debug.Log("KICKABLE FOUND! APPLYING FORCE!");
             kickable.Kick(_kickAmount);
-        }
-        else
-        {
-            Debug.Log("NO KICKABLE COMPONENT FOUND!");
         }
     }
     

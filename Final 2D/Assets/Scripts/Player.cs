@@ -35,7 +35,14 @@ public class Player : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
 
         _rb2D.linearVelocity = new Vector2(horizontal * _speed, _rb2D.linearVelocity.y);
-
+        if (horizontal != 0)
+        {
+            _animator.SetBool("isRunning", true);
+        }
+        else
+        {
+            _animator.SetBool("isRunning", false);
+        }
 
         if (horizontal < 0)
         {
@@ -54,9 +61,9 @@ public class Player : MonoBehaviour
             _rb2D.linearVelocity = new Vector2(_rb2D.linearVelocity.x, _jump);
         }
 
-        if (Input.GetKey(KeyCode.Space))
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("KICK METHOD START");
             Kick();
         }
 
@@ -69,7 +76,6 @@ public class Player : MonoBehaviour
     {
         // Set animation parameter.
         _animator.SetTrigger("Kick");
-        Debug.Log("KICK METHOD STARTED!");
 
         if (_kickLeft == null || _kickRight == null)
         {
@@ -82,7 +88,6 @@ public class Player : MonoBehaviour
         _kickLeft.SetActive(false);
         _kickRight.SetActive(false);
 
-        Debug.Log("ACTIVATING HITBOX: " + hitbox.name);
 
         hitbox.SetActive(true);
     }
